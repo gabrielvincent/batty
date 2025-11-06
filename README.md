@@ -5,6 +5,8 @@
 - Do not use this with [TLP](https://github.com/linrunner/TLP) as it can cause unpredictable behavior. Usually TLP can solve this however for projects like [Omarchy](https://github.com/basecamp/omarchy) where TLP is not provided, Batty can work in substitute, which inspired me to build this simple tool.
 - Can use the TUI to alter battery threshold
 
+![Batty TUI Screenshot](assets/battery_tui.png)
+
 ### How to use it
 
 #### Install Batty

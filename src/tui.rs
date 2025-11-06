@@ -310,14 +310,15 @@ fn draw_ui(frame: &mut Frame<'_>, app: &mut App) {
     let header_layout = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            Constraint::Fill(1),
-            Constraint::Fill(1),
-            Constraint::Fill(1),
+            Constraint::Percentage(25),
+            Constraint::Percentage(25),
+            Constraint::Percentage(25),
+            Constraint::Percentage(25),
         ])
         .flex(Flex::SpaceAround)
         .split(inner_layout[0]);
 
-    let bat_percent = format!("{:.2}%", app.battery.percentage());
+    let bat_percent = format!("{:.2}%", app.battery.charge_percentage());
     let percentage_widget = Paragraph::new(bat_percent)
         .block(
             Block::default()
@@ -351,9 +352,24 @@ fn draw_ui(frame: &mut Frame<'_>, app: &mut App) {
         )
         .centered();
 
+    let health = app
+        .battery
+        .health_percentage()
+        .map(|h| format!("{:.1}%", h))
+        .unwrap_or_else(|| "--".to_string());
+    let health_widget = Paragraph::new(health)
+        .block(
+            Block::default()
+                .title("Health")
+                .title_alignment(Alignment::Center)
+                .borders(Borders::ALL),
+        )
+        .centered();
+
     frame.render_widget(percentage_widget, header_layout[0]);
     frame.render_widget(status_widget, header_layout[1]);
     frame.render_widget(cycles_widget, header_layout[2]);
+    frame.render_widget(health_widget, header_layout[3]);
 
     let start_selected = app.curr_threshold_kind == ThresholdKind::Start;
 

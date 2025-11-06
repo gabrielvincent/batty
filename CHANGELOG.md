@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.2] - 2025-11-06
+### Added
+- Added battery health percentage display in TUI header
+- Changed battery percentage() to charge_percentage() and health_percentage() for clarity
+
 ## [0.4.1] - 2025-10-30
 ### Changed
 -  Fixed error on writing to start threshold if path not available

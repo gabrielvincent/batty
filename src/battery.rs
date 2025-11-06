@@ -26,6 +26,7 @@ pub enum BatteryAttribute {
     TotalPower,
     Status,
     Cycles,
+    DesignPower,
 }
 
 impl BatteryAttribute {
@@ -35,6 +36,7 @@ impl BatteryAttribute {
             Self::TotalPower => "energy_full",
             Self::Status => "status",
             Self::Cycles => "cycle_count",
+            Self::DesignPower => "energy_full_design",
         }
     }
 }
@@ -46,6 +48,7 @@ impl fmt::Display for BatteryAttribute {
             Self::TotalPower => write!(f, "total power"),
             Self::Status => write!(f, "status"),
             Self::Cycles => write!(f, "cycle count"),
+            Self::DesignPower => write!(f, "design power"),
         }
     }
 }
@@ -56,6 +59,7 @@ pub struct Battery {
     pub curr_power: u32,
     pub status: BatteryStatus,
     pub cycles: Option<u8>,
+    pub battery_health: Option<f32>,
 }
 
 impl Battery {
@@ -108,6 +112,21 @@ impl Battery {
             });
 
         let cycles: Option<u8> = read_num_battery_attribute(path, BatteryAttribute::Cycles).ok();
+
+        let design_power: Option<u32> =
+            read_num_battery_attribute(path, BatteryAttribute::DesignPower).ok();
+
+        let battery_health: Option<f32> = match design_power {
+            Some(design) if design > 0 => Some((total_power as f32 / design as f32) * 100.0),
+            _ => {
+                warnings.push(format!(
+                    "Failed to read design power for {}. Battery health unavailable.",
+                    battery_name
+                ));
+                None
+            }
+        };
+
         Ok((
             Self {
                 path: path.to_path_buf(),
@@ -115,6 +134,7 @@ impl Battery {
                 total_power,
                 status,
                 cycles,
+                battery_health,
             },
             warnings,
         ))
@@ -126,8 +146,12 @@ impl Battery {
         Ok(warnings)
     }
 
-    pub fn percentage(&self) -> f32 {
+    pub fn charge_percentage(&self) -> f32 {
         (self.curr_power as f32 / self.total_power as f32) * 100.0
+    }
+
+    pub fn health_percentage(&self) -> Option<f32> {
+        self.battery_health
     }
 }
 

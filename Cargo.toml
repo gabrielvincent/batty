@@ -1,7 +1,7 @@
 [package]
 name = "batty"
-version = "0.4.1"
-authors = ["Nico Estrada <estradanicolas@gmail.com>", "Gabriel Vincent"]
+version = "0.4.2"
+authors = ["Nico Estrada <ne13@illinois.edu>", "Gabriel Vincent"]
 edition = "2021"
 description = "Battery Health Tool for Linux"
 license = "MIT"
